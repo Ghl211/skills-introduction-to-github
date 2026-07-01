@@ -28,6 +28,12 @@
 
 ---
 
+<p align="center">
+  <img src=".github/images/dual-ring-gate-arch.svg" alt="Dual-Ring Gate Architecture" width="100%">
+</p>
+
+---
+
 ## Quick Install
 
 ```bash

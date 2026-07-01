@@ -48,6 +48,12 @@
 
 ---
 
+<p align="center">
+  <img src=".github/images/dual-ring-gate-arch.svg" alt="双环门禁架构图" width="100%">
+</p>
+
+---
+
 ## ⚡ 快速安装
 
 ```bash
