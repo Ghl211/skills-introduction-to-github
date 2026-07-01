@@ -1,0 +1,31 @@
+{
+  "updated": "YYYY-MM-DD",
+  "hot": [
+    {
+      "rule": "Describe your most-frequent error here",
+      "reason": "Why this rule is in hot layer",
+      "err_ref": "Optional: reference ID",
+      "days_active": 1,
+      "last_correction": "YYYY-MM-DD"
+    },
+    {
+      "rule": "Your second most-frequent error",
+      "reason": "Example: 'Keep forgetting to check gateway on new session'",
+      "days_active": 1,
+      "last_correction": "YYYY-MM-DD"
+    },
+    {
+      "rule": "Your third most-frequent error",
+      "reason": "Hot layer has a maximum of 3 rules",
+      "days_active": 1,
+      "last_correction": "YYYY-MM-DD"
+    }
+  ],
+  "warm": [],
+  "meta": {
+    "hot_promote_if": "New correction within last 3 days",
+    "warm_cooldown": "No recurrence for 7 days → warm → cold",
+    "retire_after_days": 30,
+    "retire_reentry": "Retired rule that recurs → direct to hot (penalty for old habits)"
+  }
+}
