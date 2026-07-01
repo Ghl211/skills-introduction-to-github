@@ -189,6 +189,5 @@ MIT License. 自由使用、修改、分发。Free to use, modify, and distribut
 ---
 
 <p align="center">
-  <sub>受到自进化方法论（五步法：感知→分析→决策→执行→反馈+记忆）启发。<br>
-  Inspired by the Self-Evolution Methodology (5-Step: Sense → Diagnose → Decide → Act → Feedback & Memory).</sub>
+  <sub>MIT License. 自由使用、修改、分发。Free to use, modify, and distribute.</sub>
 </p>
