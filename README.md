@@ -86,7 +86,40 @@ hermes gateway status            # 网关检查（cron调度器）
 
 ---
 
-## ⚡ 快速安装
+## ⚡ 触发方式（怎么用）
+
+双环门禁是**被动技能**——不是"你叫它才触发"，而是"自动生效"。
+
+| 组件 | 触发条件 | 触发者 |
+|:-----|:---------|:-------|
+| **内层环**（SOUL.md） | 每次新会话开始 | **自动**——SOUL.md由Hermes每次注入system prompt |
+| **外层环**（shell脚本） | 每次启动Hermes之前 | **自动**——配置shell alias后，不跑脚本不让进会话 |
+| **热层更新**（hot-rules.json） | 你纠正AI时 | **手动或自动**——你说一句"把它放热层"，或复盘Agent自动更新 |
+
+### 装好后什么都不用做
+
+你不需要每次手动 `/skill dual-ring-gate` 来激活它。装好后的第一分钟它就在工作了：
+
+```
+安装完成 → 下次新会话开始
+  → SOUL.md注入system prompt（内层环自动生效）
+  → shell alias触发pre-session-check.sh（外层环可选）
+  → 3条热层规则在prompt里摆着
+  → 你发现AI忘了查时间 → 你说"放热层" → hot-rules.json更新
+```
+
+### 验证是否生效
+
+新开一个Hermes会话，看system prompt里是否有这3行：
+
+```markdown
+## 🔴 Dual-Ring Gate · Inner Ring (auto-injected · cannot skip)
+- **Time check**: terminal('date') before every response
+- **Gateway check**: verify gateway status on first response of each session
+- **Rule update**: every fix must also update the error rule database
+```
+
+有 → 生效了。没有 → 检查SOUL.md是否已追加。
 
 ### 方式一：一行命令安装
 
