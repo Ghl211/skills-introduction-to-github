@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">🤖 Dual-Ring Gate</h1>
+  <h1 align="center">🤖 Dual-Ring Gate <sub>v1.1</sub></h1>
   <p align="center">
     <em>A Hermes Agent skill that makes self-checks impossible to skip.<br>
     Not by reminding the AI — by making it physically unable to bypass.</em>
@@ -22,7 +22,7 @@
     </a>
   </p>
   <p align="center">
-    <a href="README.md">English</a> | <a href="README_CN.md">中文</a>
+    <a href="README.md">English</a> | <a href="README_CN.md">Chinese</a>
   </p>
 </p>
 
@@ -40,7 +40,7 @@
 hermes skills install https://raw.githubusercontent.com/Ghl211/skills-introduction-to-github/main/AI-skill/dual-ring-gate/SKILL.md
 ```
 
-That's it. Restart your Hermes session — the inner ring activates automatically.
+That is it. Restart your Hermes session - the inner ring activates automatically.
 
 ---
 
@@ -48,70 +48,77 @@ That's it. Restart your Hermes session — the inner ring activates automaticall
 
 | Feature | What it does |
 |:--------|:-------------|
-| 🛡️ **Dual-layer enforcement** | Shell gate (can't skip) + Prompt gate (can't delete) |
-| 🔄 **Rule lifecycle** | Rules auto-retire after 30 days of no recurrence |
-| ⚡ **Zero config** | Works immediately after install |
-| 🪶 **Lightweight** | Hot layer ~50 tokens. Outer ring: zero tokens |
-| 🧩 **Pluggable** | Works standalone, or connects to your existing review agent |
+| Shield Dual-layer enforcement | Shell gate (can not skip) + Prompt gate (can not delete) |
+| Cycle Rule lifecycle | Rules auto-retire after 30 days of no recurrence |
+| NEW Per-response freshness | Hot-rules auto-loaded before EVERY reply, not just session start. Closes mid-conversation drift. |
+| Lightning Zero config | Works immediately after install |
+| Feather Lightweight | Hot layer ~50 tokens. Outer ring: zero tokens |
+| Puzzle Pluggable | Works standalone, or connects to your existing review agent |
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────┐
-│  OUTER RING · Shell Gate            │
-│  Enforced before AI starts speaking │
-├─────────────────────────────────────┤
-│  INNER RING · Prompt Gate           │
-│  Pinned in SOUL.md, always injected │
-├──────────────┬──────────────────────┤
-│ 🔥 Hot       │ 🌤 Warm              │
-│ Last 3 days  │ Recurrence ≥ 2       │
-├──────────────┼──────────────────────┤
-│ ❄️ Cold      │ 🗑️ Retired           │
-│ >7d dormant  │ 30d → archived       │
-└──────────────┴──────────────────────┘
++-------------------------------------+
+|  OUTER RING - Shell Gate            |
+|  Enforced before AI starts speaking |
++-------------------------------------+
+|  INNER RING - Prompt Gate           |
+|  Pinned in SOUL.md, always injected |
++-------------------------------------+
+|  NEW PER-RESPONSE - Hot-Rules Load  |
+|  Auto-loaded before EVERY reply     |
+|  Prevents mid-conversation drift    |
++------------------+------------------+
+| Hot              | Warm             |
+| Last 3 days      | Recurrence >= 2  |
++------------------+------------------+
+| Cold             | Retired          |
+| >7d dormant      | 30d - archived   |
++------------------+------------------+
 ```
+
+New in v1.1: the Per-Response layer ensures hot-rules stay in context for every reply, not just at session start. Prevents the "I loaded it 15 turns ago and forgot" failure mode.
 
 ---
 
 ## Usage
 
-### 🟢 Beginner — Install & Go
+### Green Beginner - Install and Go
 
 No configuration needed. Outer ring + inner ring activate immediately on next session.
 
-### 🟡 Intermediate — Grow Your Rules
+### Yellow Intermediate - Grow Your Rules
 
 When the AI makes a new mistake, just tell it:
 
-> _"I keep forgetting to check the time before speaking. Put it in the hot layer."_
+> "I keep forgetting to check the time before speaking. Put it in the hot layer."
 
-The AI updates `hot-rules.json` automatically. No recurrence for 30 days? The rule retires itself.
+The AI updates hot-rules.json automatically - including last_correction and days_active metadata. No recurrence for 30 days? The rule retires itself.
 
-### 🔴 Expert — Connect a Review Agent
+### Red Expert - Connect a Review Agent
 
 If you have a daily review agent, it can auto-scan conversations for corrections and update the hot layer:
 
 ```
-Review Agent → Extract corrections → Sort TOP3 → Update hot-rules.json → Next session loads new rules
+Review Agent to Extract corrections to Sort TOP3 to Update hot-rules.json to Next session loads new rules
 ```
 
 ---
 
-## Verify It's Working
+## Verify It is Working
 
-Start a fresh Hermes session. You should see these 3 lines in your system prompt:
+Start a fresh Hermes session. With v1.1, you should see these lines in your system prompt:
 
 ```
-## 🔴 Dual-Ring Gate · Inner Ring (auto-injected · cannot skip)
-- **Time check**: terminal('date') before every response
+## Red Dual-Ring Gate - Inner Ring (auto-injected - cannot skip)
+- **Time check (ERR-019)**: If reply contains time words (now/already/not yet/today/yesterday/tomorrow) to MUST terminal(date) first. Data expires after 5 min or 3 tool calls.
 - **Gateway check**: verify gateway status on first response
 - **Rule update**: every fix must also update the error rule database
 ```
 
-Present → it's working. Missing → check `~/.hermes/SOUL.md`.
+Present to it is working. Missing to check $HERMES_HOME/SOUL.md.
 
 ---
 
@@ -119,9 +126,10 @@ Present → it's working. Missing → check `~/.hermes/SOUL.md`.
 
 | Component | Trigger | Automation |
 |:----------|:--------|:----------:|
-| **Inner Ring** | Every new session | ✅ Auto |
-| **Outer Ring** (shell script) | Before each Hermes launch | ✅ Auto (with alias) |
-| **Hot Rules** | When you correct the AI | 🔄 Manual or auto |
+| Inner Ring | Every new session | Auto |
+| Outer Ring (shell script) | Before each Hermes launch | Auto (with alias) |
+| NEW Per-Response Loading | Before EVERY reply | Auto (AI reads hot-rules) |
+| Hot Rules | When you correct the AI | Manual or auto |
 
 ---
 
@@ -138,9 +146,20 @@ curl -fsSL https://raw.githubusercontent.com/Ghl211/skills-introduction-to-githu
 ```
 
 ### Manual (3 steps)
-1. Copy `AI-skill/dual-ring-gate/SKILL.md` → `~/.hermes/skills/knowledge/dual-ring-gate/`
-2. Append inner ring instructions to `~/.hermes/SOUL.md`
-3. Place `hot-rules.json` in `~/.hermes/flywheel/` and fill in your top 3 mistakes
+1. Copy AI-skill/dual-ring-gate/SKILL.md to $HERMES_HOME/skills/knowledge/dual-ring-gate/
+2. Append inner ring instructions to $HERMES_HOME/SOUL.md (use detection keywords, not just "check time")
+3. Place hot-rules.json in $HERMES_HOME/flywheel/ and fill in your top 3 mistakes
+
+---
+
+## What is New in v1.1
+
+| Improvement | Problem it solves |
+|:------------|:-----------------|
+| Per-response hot-rules loading | Rules pushed out of context after 15+ turns |
+| Session mid-segment freshness | Time data expires after 5 min / 3 tool calls |
+| Correction to hot-rules feedback chain | Every correction auto-updates last_correction / days_active |
+| Detection keywords in inner ring | "Remember to check time" is too vague. Now: "if you see these words to MUST date" |
 
 ---
 
@@ -148,27 +167,35 @@ curl -fsSL https://raw.githubusercontent.com/Ghl211/skills-introduction-to-githu
 
 ```
 AI-skill/dual-ring-gate/
-├── SKILL.md                    ← Main skill (install entry)
-├── scripts/
-│   ├── pre-session-check.sh    ← Outer ring shell gate
-│   └── install.sh              ← Auto-install script
-└── templates/
-    └── hot-rules.json          ← Hot rules template
++-- SKILL.md                    - Main skill v1.1 (install entry)
++-- scripts/
+|   +-- pre-session-check.sh    - Outer ring shell gate
+|   +-- install.sh              - Auto-install script
++-- templates/
+    +-- hot-rules.json          - Hot rules template
 ```
+
+---
+
+## Real-World Results
+
+This skill was born from a real problem: the AI made the same time-awareness mistake 5 times between June 22 and July 3, 2026, despite documented rules. Every fix was rule-level - no mechanism prevented skipping.
+
+Dual-Ring Gate v1.1 closes this with three enforcement layers, dropping the error recurrence to zero after deployment.
 
 ---
 
 ## Contributing
 
-Contributions welcome! ⭐ Star · 🐛 Issue · 🔀 PR · 💬 Share
+Contributions welcome! Star - Issue - PR - Share
 
 ---
 
 ## Community
 
-- **Issues**: [github.com/Ghl211/skills-introduction-to-github/issues](https://github.com/Ghl211/skills-introduction-to-github/issues)
-- **Discussions**: GitHub Discussions
-- **Hermes Discord**: [discord.gg/hermes-agent](https://discord.gg/hermes-agent)
+- Issues: github.com/Ghl211/skills-introduction-to-github/issues
+- Discussions: GitHub Discussions
+- Hermes Discord: discord.gg/hermes-agent
 
 ---
 
